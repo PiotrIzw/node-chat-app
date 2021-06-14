@@ -1,6 +1,8 @@
 #!/usr/bin/env groovy
 pipeline {
-    agent any
+    agent {
+        docker { image 'node:14-alpine' }
+    }
 
     environment {
         FAILED = false
@@ -10,7 +12,7 @@ pipeline {
         stage('Build') {
             steps {
                 git branch: 'master', url: 'https://github.com/PiotrIzw/node-chat-app'
-                git pull
+                sh 'git pull'
                 sh 'npm install > log_build.txt'
             }
             post {
