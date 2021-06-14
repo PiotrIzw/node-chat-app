@@ -7,6 +7,7 @@ pipeline {
         stage('Build') {
             steps {
                 git branch: 'master', url: 'https://github.com/PiotrIzw/node-chat-app'
+                which npm
                 sh "/usr/bin/npm install"
                 }
             }
