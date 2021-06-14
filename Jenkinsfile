@@ -1,40 +1,36 @@
+#!/usr/bin/env groovy
 pipeline {
-    agent any
-
-    stages {
-        stage('Pull in changes') {
-            steps {
-                git branch: 'crow', url: 'https://github.com/maciejewiczow/feathers-chat'
+    agent {
+        docker {
+            image 'node:14-alpine'
             }
-        }
+    }
+    
+    stages {
         stage('Build') {
             steps {
-                sh ' docker build -f build.Dockerfile -t feathers-chat:latest .'
+                git branch: 'master', url: 'https://github.com/PiotrIzw/node-chat-app'
+                sh 'npm install'
+                }
             }
-        }
         stage('Test') {
             steps {
-                sh 'docker-compose up'
-                sh '''[ `docker-compose ps -q | xargs docker inspect -f '{{ .State.ExitCode }}' | grep -v '^0' | wc -l | tr -d ' '` = "0" ]'''
+                sh 'npm run test > log.txt'
             }
-        }
-    }
-
-    post {
-        failure {
-            emailext (
-                attachLog: true,
-                body: '$PROJECT_NAME - Build # $BUILD_NUMBER Failed. See attached logs to view the results.',
-                recipientProviders: [requestor()],
-                subject: '$DEFAULT_SUBJECT'
-            )
-        }
-        success {
-            emailext (
-                body: '$PROJECT_NAME - Build # $BUILD_NUMBER ran successfully',
-                recipientProviders: [requestor()],
-                subject: '$DEFAULT_SUBJECT'
-            )
-        }
+            post {
+                failure {
+                        emailext attachLog: true,
+                        attachmentsPattern: 'log.txt',
+                        to:'piotr.izworski.0@gmail.com',
+                        subject: "Failed Test stage in Pipeline: ${currentBuild.fullDisplayName}",
+                        body: "Something is wrong with ${env.BUILD_URL}"        
+                }
+                success {
+                        mail to: 'piotr.izworski.0@gmail.com',
+                        subject: "Success Pipeline: ${currentBuild.fullDisplayName}",
+                        body: "Success testing ${env.BUILD_URL} "                        
+                }
+            }
+        } 
     }
 }
