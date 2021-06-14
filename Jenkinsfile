@@ -6,7 +6,7 @@ pipeline {
         stage('Build') {
             steps {
                 git branch: 'master', url: 'https://github.com/PiotrIzw/node-chat-app'
-                sh '/var/jenkins_home/npm install'
+                sh 'npm install'
                 }
             }
         stage('Test') {
