@@ -1,17 +1,13 @@
 #!/usr/bin/env groovy
 pipeline {
-     agent {
-        docker {
-            image 'node:14-alpine'
-            }
-     }
+     agent any
     
     stages {
         stage('Build') {
             steps {
                 git branch: 'master', url: 'https://github.com/PiotrIzw/node-chat-app'
                 which npm
-                sh 'npm install'
+                sh '/var/jenkins_home/npm install'
                 }
             }
         stage('Test') {
