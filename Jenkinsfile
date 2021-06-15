@@ -11,6 +11,7 @@ pipeline {
     stages {
         stage('Build') {
             steps {
+                apt-get -y install git
                 git branch: 'master', url: 'https://github.com/PiotrIzw/node-chat-app'
                 git pull
                 sh 'npm install > log_build.txt'
