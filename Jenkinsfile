@@ -13,7 +13,6 @@ pipeline {
             steps {
                 git branch: 'master', url: 'https://github.com/PiotrIzw/node-chat-app'
                 sh 'npm install > log_build.txt'
-                sh 'ls'
                 //git pull
             }
             post {
