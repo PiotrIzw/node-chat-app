@@ -11,14 +11,10 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                ls
-                sh '''
-                echo 'Building..'
-                apt-get -y install git
-                git pull origin master
-                '''
                 git branch: 'master', url: 'https://github.com/PiotrIzw/node-chat-app'
                 sh 'npm install > log_build.txt'
+                sh 'ls'
+                //git pull
             }
             post {
                 failure {
