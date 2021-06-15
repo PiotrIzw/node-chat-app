@@ -1,76 +1,62 @@
-#!/usr/bin/env groovy
 pipeline {
-    agent {
-        docker { image 'node:14-alpine' }
-    }
 
-    environment {
-        FAILED = false
-    }
-
+    agent any
+    	tools{nodejs "NodeJS"}
+	
     stages {
         stage('Build') {
             steps {
-                git branch: 'master', url: 'https://github.com/PiotrIzw/node-chat-app'
-                sh 'npm install > log_build.txt'
-            }
-            post {
-                failure {
-                    script {
-                        env.FAILED = true
-                    }  
-
-                    emailext attachLog: true,
-                        attachmentsPattern: 'log_build.txt',
-                        to:'piotr.izworski.0@gmail.com',
-                        subject: "Failed Build stage in Pipeline: ${currentBuild.fullDisplayName}",
-                        body: "Something is wrong with ${env.BUILD_URL}"     
-                      
-                }
-                success {
-                    mail to: 'piotr.izworski.0@gmail.com',
-                        subject: "Success Pipeline: ${currentBuild.fullDisplayName}",
-                        body: "Success building ${env.BUILD_URL} "                        
-                }
-            }
+                echo 'Building!!!'
+                sh 'npm install'
         }
+            
+        post {
+         always {
+            echo 'Finished!'
+         }
+         success {
+            echo 'Success!'
+            emailext attachLog: true,
+                body: "${currentBuild.currentResult}: Job ${env.JOB_NAME} build ${env.BUILD_NUMBER}",
+                to: 'piotr.izworski.0@gmail.com',
+                subject: "Build succeed in Jenkins! :)"
+         }
+         failure {
+            echo 'Failure!'
+            emailext attachLog: true,
+                body: "${currentBuild.currentResult}: Job ${env.JOB_NAME} build ${env.BUILD_NUMBER}",
+                to: 'piotr.izworski.0@gmail.com',
+                subject: "Build failed in Jenkins! :("
+         }
+     	 }
+       }
+       
         stage('Test') {
             steps {
-                when ( env.FAILED ) {
-                    expression {
-                        currentBuild.result = 'ABORTED'
-                        error('Build failed! Stopping…')
-                    }
-                }
-                sh 'npm run test > log.txt'
+                echo 'Testing!!!'
+		sh 'npm install'
+                sh 'npm run test'
             }
-            post {
-                failure {
-                    emailext attachLog: true,
-                        attachmentsPattern: 'log.txt',
-                        to:'piotr.izworski.0@gmail.com',
-                        subject: "Failed Test stage in Pipeline: ${currentBuild.fullDisplayName}",
-                        body: "Something is wrong with ${env.BUILD_URL}"        
-                }
-                success {
-                    mail to: 'piotr.izworski.0@gmail.com',
-                        subject: "Success Pipeline: ${currentBuild.fullDisplayName}",
-                        body: "Success testing ${env.BUILD_URL} "                        
-                }
-            }
-        } 
-        // stage('Deploy') {
-        //     steps {
-        //         sh 'git fetch --all'
-        //         sh 'git checkout master'
-        //         sh "git merge  ${env.BRANCH_NAME}"    
-        //     }
-        //     post {
-        //         failure {
-        //             mail to: 'piotr.izworski.0@gmail.com',
-        //             subject: "Failed Pipeline: ${currentBuild.fullDisplayName}",
-        //         }
-        //     }
-        // }
+		
+	post {
+		always {
+		    echo 'Finished!'
+		}
+		success {
+		    echo 'Success!'
+		    emailext attachLog: true,
+			body: "${currentBuild.currentResult}: Job ${env.JOB_NAME} build ${env.BUILD_NUMBER}",
+			to: 'piotr.izworski.0@gmail.com',
+			subject: "Test succeed in Jenkins! :)"
+		}
+		failure {
+		    echo 'Failure!'
+		    emailext attachLog: true,
+			body: "${currentBuild.currentResult}: Job ${env.JOB_NAME} build ${env.BUILD_NUMBER}",
+			to: 'piotr.izworski.0@gmail.com',
+			subject: "Test failed in Jenkins! :("
+		}
+    	}
+      }
     }
 }
