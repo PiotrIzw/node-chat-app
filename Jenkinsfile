@@ -1,3 +1,4 @@
+#!/usr/bin/env groovy
 pipeline {
     agent {
         docker { image 'node:14-alpine' }
@@ -10,8 +11,6 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                sh 'git checkout master'
-                sh 'git pull origin master'
                 sh 'npm install'
                 
             }
