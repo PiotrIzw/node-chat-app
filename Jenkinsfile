@@ -11,6 +11,7 @@ pipeline {
     stages {
         stage('Build') {
             steps {
+                ls
                 sh '''
                 echo 'Building..'
                 apt-get -y install git
