@@ -24,7 +24,7 @@ pipeline {
 			    	emailext attachLog: true,
 				body: "Build failed for job ${env.JOB_NAME}",
 				subject: "Build failed.",
-				to: 'piotr.izworski.0@gmail.com'
+				to: 'piotrekizworski@gmail.com'
             		}
             	}
             	success{
@@ -32,7 +32,7 @@ pipeline {
 			emailext attachLog: true,
 			body: "Builds succeeded for job ${env.JOB_NAME}",
 			subject: "Build sucessful.",
-			to: 'piotr.izworski.0@gmail.com'
+			to: 'piotrekizworski@gmail.com'
             	}
             
             }
@@ -55,7 +55,7 @@ pipeline {
 			attachmentsPattern: 'tests_log.txt',
 			body: "Tests successful for job ${env.JOB_NAME}",
 			subject: "Tests successful.",
-			to: 'piotr.izworski.0@gmail.com'
+			to: 'piotrekizworski@gmail.com'
             	}
             	failure{
             		echo 'Tests failed....'
@@ -63,7 +63,7 @@ pipeline {
 			attachmentsPattern: 'tests_log.txt',
 			body: "Tests failed for job ${env.JOB_NAME}",
 			subject: "Tests failed.",
-			to: 'piotr.izworski.0@gmail.com'
+			to: 'piotrekizworski@gmail.com'
             	}
             
             }
