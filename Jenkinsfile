@@ -9,7 +9,7 @@ pipeline {
         stage('Build') {
             steps {
                 sh 'git checkout master'
-                sh 'git pull'
+                sh 'git pull origin master'
                 sh 'npm install'
                 
             }
